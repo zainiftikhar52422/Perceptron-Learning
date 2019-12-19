@@ -87,8 +87,10 @@ def classify(fileName=arg):
 def testModel(fileName,weights,weight_o):
     flowers_test=pd.read_csv(fileName)
     rows,columns=flowers_test.shape
-    correct=0
-    false=0
+    falseNegtive=0
+    trueNegtive=0
+    falsePostive=0
+    truePostive=0
     x_o=-1
     examps=list()
     for i in range(rows):
@@ -104,15 +106,20 @@ def testModel(fileName,weights,weight_o):
         else:
             output=0
         if((output-examp[(len(weights))])!=0):    
-            false=false+1
-        else:
-            correct=correct+1
-    print("Total: ", rows,"\nCorrect: ",correct,"\nFalse: ",false) 
+            if(output==0):
+                falseNegtive=falseNegtive+1
+            elif(output==1):
+                falsePostive=falsePostive+1
+        elif(output==1):
+            truePostive=truePostive+1
+        elif(output==0):
+            trueNegtive=trueNegtive+1
+    print("Accuracy: ",((truePostive+trueNegtive)/(falseNegtive+falsePostive+trueNegtive+truePostive))*100,"%") 
 
 
 if __name__ == '__main__': 
-    weights,weight_o=(classify())
-    print(weights,weight_o)
-    arg=arg.split(".")[0]
-    arg=arg+"test.csv"
-    testModel(arg,weights,weight_o)
+    for i in range(13):
+        weights,weight_o=(classify())
+        print(weights,weight_o)
+        arg=arg
+        testModel(arg,weights,weight_o)
